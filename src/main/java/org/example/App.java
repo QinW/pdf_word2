@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class App {
 
@@ -9,24 +10,21 @@ public class App {
     public static void main( String[] args ) {
 
         final Map<String, Integer> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
+        final Pattern pattern = Pattern.compile("[^a-zA-Z]");
+        final Pattern pattern1 = Pattern.compile("[a-zA-Z]");
         for(String word: PDFBoxReader.readText(CONTENT_PDF).split(" ")) {
-            if (word.contains(",")) {
-                word = word.replaceAll(",", "");
-            } else if (word.contains("\n")) {
-                word = word.replaceAll("\n", "");
-            } else if (word.contains(".")) {
-                word = word.replaceAll(".", "");
-            }
-            if (word.length() > 2) {
+            if (pattern1.matcher(word).find()) {
+                if (pattern.matcher(word).find()) {
+                    word = word.replaceAll("[^a-zA-Z]", "");
+                }
                 map.put(word, map.containsKey(word) ? map.get(word) + 1 : 1);
-            }
-            if (word.contains("\n")) {
-                System.out.println("{[" + word + "],,,,,,[" + word.replaceAll("\n", "") + "]}");
             }
         }
 
         final List<Map.Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
         list.sort(Map.Entry.comparingByValue());
+        System.out.println("========== Start =========");
+        System.out.println(list);
+        System.out.println("==========  End  =========");
     }
 }
